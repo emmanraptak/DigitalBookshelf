@@ -23,12 +23,16 @@ def connect_to_database(path_to_db: Path) -> sqlite3.Connection:
     
     return connection
 
-def close_database(connection: sqlite3.Connection) -> None:
-    
-    print("Attemping to close connection to the database...")
-    connection.close()
-    print("Connection to database succesfully closed!")
+def close_database_connection(connection: sqlite3.Connection) -> None:
+        print("Attemping to close connection to the database...")
+        cursor = connection.cursor
+        if cursor is not None:
+            cursor.close()
+
+        connection.close()
+        print("Connection to database succesfully closed!")
 
 if __name__ == "__main__":
     connection = connect_to_database(path_to_db=PATH_TO_DB)
-    close_database(connection=connection)
+    if connection is not None:
+        close_database_connection(connection=connection)
