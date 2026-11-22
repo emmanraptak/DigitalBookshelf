@@ -4,7 +4,7 @@ from pathlib import Path
 
 PATH_TO_DB = Path("./data/digital_bookshelf.db")
 
-def connect_to_database(path_to_db: Path) -> sqlite3.Connection:
+def connect_to_database() -> sqlite3.Connection:
 
     connection = None
 
@@ -33,6 +33,6 @@ def close_database_connection(connection: sqlite3.Connection) -> None:
         print("Connection to database succesfully closed!")
 
 if __name__ == "__main__":
-    connection = connect_to_database(path_to_db=PATH_TO_DB)
+    connection = connect_to_database()
     if connection is not None:
         close_database_connection(connection=connection)
