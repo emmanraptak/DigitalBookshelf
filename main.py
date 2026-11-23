@@ -1,8 +1,10 @@
 import sqlite3
 
 from pathlib import Path
+from src.book import Book
+from src.reading_status import ReadingStatus
 
-PATH_TO_DB = Path("./data/digital_bookshelf.db")
+PATH_TO_DB = Path("./data/bookshelf.db")
 
 def connect_to_database() -> sqlite3.Connection:
 
@@ -23,16 +25,57 @@ def connect_to_database() -> sqlite3.Connection:
     
     return connection
 
-def close_database_connection(connection: sqlite3.Connection) -> None:
-        print("Attemping to close connection to the database...")
-        cursor = connection.cursor
-        if cursor is not None:
-            cursor.close()
+def create_books_table(connection: sqlite3.Connection) -> None:
+    
+    # TODO: generalise status based on user input
+    # TODO: wrap this call
 
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS BOOKS (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        isbn INTEGER NOT NULL,
+        status TEXT CHECK(status IN ('TBR', 'READING', 'READ', 'DNF'))
+        );
+        """
+    )
+
+    connection.commit()
+
+def add_book(connection: sqlite3.Connection, book: Book) -> None:
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "INSERT INTO BOOKS (title, isbn, status) VALUES (?, ?, ?)",
+        (book.get_title(), book.get_isbn(), book.get_status())
+    )
+    
+    cursor.execute("SELECT * FROM BOOKS")
+    print(cursor.fetchall())
+
+def close_database_connection(connection: sqlite3.Connection) -> None:
+        
+        print("Attemping to close connection to the database...")
         connection.close()
         print("Connection to database succesfully closed!")
 
 if __name__ == "__main__":
     connection = connect_to_database()
     if connection is not None:
-        close_database_connection(connection=connection)
+        cursor = connection.cursor()
+
+        create_books_table(connection)
+
+        # Test code for now
+        book = Book(
+            title="Animal Farm",
+            isbn=9780452284241,
+            status=str(ReadingStatus.READ.value)
+        )
+        add_book(connection, book)
+        
+        close_database_connection(connection)
