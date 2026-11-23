@@ -1,7 +1,7 @@
 from enum import Enum
 
 class ReadingStatus(Enum):
-    TBR = 1
-    READING = 2
-    READ = 3
-    DNF = 4
+    TBR = 'TBR'
+    READING = 'READING'
+    READ = 'READ'
+    DNF = 'DNF'

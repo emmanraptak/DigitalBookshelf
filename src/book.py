@@ -1,4 +1,4 @@
-from reading_status import ReadingStatus
+from .reading_status import ReadingStatus
 
 class Book():
     """Basic book class"""
