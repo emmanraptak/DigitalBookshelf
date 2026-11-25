@@ -51,7 +51,7 @@ def add_book(connection: sqlite3.Connection, book: Book) -> None:
 
     cursor.execute(
         "INSERT INTO BOOKS (title, isbn, status) VALUES (?, ?, ?)",
-        (book.get_title(), book.get_isbn(), book.get_status())
+        (book.title, book.isbn10, book.status)
     )
     
     cursor.execute("SELECT * FROM BOOKS")
@@ -73,7 +73,10 @@ if __name__ == "__main__":
         # Test code for now
         book = Book(
             title="Animal Farm",
-            isbn=9780452284241,
+            author="George Orwell",
+            year_published="1945",
+            isbn10=1956861378,
+            isbn13=9781956861372,
             status=str(ReadingStatus.READ.value)
         )
         add_book(connection, book)
