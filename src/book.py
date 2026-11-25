@@ -1,6 +1,7 @@
 from .reading_status import ReadingStatus
 
-class Book():
+
+class Book:
     """Basic book class"""
     
     def __init__(self, title: str, isbn: int, status: ReadingStatus):

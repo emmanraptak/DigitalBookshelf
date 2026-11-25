@@ -1,6 +1,6 @@
 import sqlite3
-
 from pathlib import Path
+
 from src.book import Book
 from src.reading_status import ReadingStatus
 
