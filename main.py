@@ -37,7 +37,10 @@ def create_books_table(connection: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS BOOKS (
         id INTEGER PRIMARY KEY,
         title TEXT NOT NULL,
-        isbn INTEGER NOT NULL,
+        author TEXT,
+        isbn10 INTEGER,
+        isbn13 INTEGER,
+        year_published INTEGER,
         status TEXT CHECK(status IN ('TBR', 'READING', 'READ', 'DNF'))
         );
         """
@@ -50,8 +53,8 @@ def add_book(connection: sqlite3.Connection, book: Book) -> None:
     cursor = connection.cursor()
 
     cursor.execute(
-        "INSERT INTO BOOKS (title, isbn, status) VALUES (?, ?, ?)",
-        (book.title, book.isbn10, book.status)
+        "INSERT INTO BOOKS (title, author, isbn10, isbn13, year_published, status) VALUES (?, ?, ?, ?, ?, ?)",
+        (book.title, book.author, book.isbn10, book.isbn13, book.year_published, book.status)
     )
     
     cursor.execute("SELECT * FROM BOOKS")
