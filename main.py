@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 
 from src.book import Book
-from src.reading_status import ReadingStatus
+from src.goodreads_importer import convert_gr_export
 
 PATH_TO_DB = Path("./data/bookshelf.db")
 
@@ -38,10 +38,9 @@ def create_books_table(connection: sqlite3.Connection) -> None:
         id INTEGER PRIMARY KEY,
         title TEXT NOT NULL,
         author TEXT,
-        isbn10 INTEGER,
-        isbn13 INTEGER,
-        year_published INTEGER,
-        status TEXT CHECK(status IN ('TBR', 'READING', 'READ', 'DNF'))
+        isbn10 TEXT UNIQUE,
+        isbn13 TEXT UNIQUE,
+        year_published INTEGER
         );
         """
     )
@@ -53,12 +52,9 @@ def add_book(connection: sqlite3.Connection, book: Book) -> None:
     cursor = connection.cursor()
 
     cursor.execute(
-        "INSERT INTO BOOKS (title, author, isbn10, isbn13, year_published, status) VALUES (?, ?, ?, ?, ?, ?)",
-        (book.title, book.author, book.isbn10, book.isbn13, book.year_published, book.status)
+        "INSERT INTO BOOKS (title, author, isbn10, isbn13, year_published) VALUES (?, ?, ?, ?, ?)",
+        (book.title, book.author, book.isbn10, book.isbn13, book.year_published)
     )
-    
-    cursor.execute("SELECT * FROM BOOKS")
-    print(cursor.fetchall())
 
 def close_database_connection(connection: sqlite3.Connection) -> None:
         
@@ -74,14 +70,8 @@ if __name__ == "__main__":
         create_books_table(connection)
 
         # Test code for now
-        book = Book(
-            title="Animal Farm",
-            author="George Orwell",
-            year_published="1945",
-            isbn10=1956861378,
-            isbn13=9781956861372,
-            status=str(ReadingStatus.READ.value)
-        )
-        add_book(connection, book)
+        books = convert_gr_export(Path("goodreads_library_export.csv"))
+        for book in books:
+            add_book(connection, book)
         
         close_database_connection(connection)
