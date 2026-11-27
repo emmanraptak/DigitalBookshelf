@@ -12,6 +12,9 @@ class Book:
         self._year_published = year_published
         self._status = status
 
+    def __str__(self):
+        return f"{self.title} by {self.author}, published {self.year_published}."
+
     @property
     def title(self):
         return self._title
